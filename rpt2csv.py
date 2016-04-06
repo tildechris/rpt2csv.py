@@ -25,7 +25,7 @@ def convert(inputFile,outputFile):
 
 	for idx, val in enumerate(inputFile):
 		if(idx == 0):
-			headers = val
+			headers = val.decode('utf-8-sig')
 		elif(idx == 1):
 			fieldIndexes = list(getFieldIndexes(val," "))
 			row = list(getFields(headers,fieldIndexes))
