@@ -1,5 +1,50 @@
 import sys
 import csv
+import pandas as pd
+
+def convert_df(inputFile):
+        """
+        Convert a RPT file to a pandas dataframe.
+
+
+        RPT files are usually sourced from old versions of Microsoft SQL Server Management Studio
+        RPT files are fixed width with column names on the first line, a second line with dashes and spaces,
+        and then on one row per record.
+        The column widths are calculated from the longest field in a column, so the format varies
+        depending on the results.  Thankfully, we can reliably infer column widths by looking at the indexes
+        of spaces on the second line.
+        Here we chop each record at the index of the space on the second line and strip the result.
+        Note, if the source data has significant whitespace, the striping will remove this, but likely significant
+        whitespace was destroyed by the RPT field padding anyway.
+        """
+        #%%
+        file = open(inputFile)
+        writer = []
+        fieldIndexes = []
+        headers = ""
+        idx = 0
+        while True:
+            # using a while loop to prevent crashing due to a line with invalid
+            # characters
+            try:
+                val = file.readline()
+                if not val:
+                    break
+                if(idx == 0):
+                    headers = val
+                elif(idx == 1):
+                    fieldIndexes = list(getFieldIndexes(val," "))
+                    row = list(getFields(headers,fieldIndexes))
+                    writer+=[row]
+                else:
+                    row = list(getFields(val,fieldIndexes))
+                    writer+=[row]
+
+            except:
+                print( "error found on line: %s"%idx)
+            idx +=1
+        #%%
+        return pd.DataFrame(writer[1:],columns=writer[0])
 
 def convert(inputFile,outputFile):
 	"""
