@@ -1,5 +1,6 @@
 import sys
 import csv
+import codecs
 
 def convert(inputFile,outputFile):
 	"""
@@ -25,7 +26,7 @@ def convert(inputFile,outputFile):
 
 	for idx, val in enumerate(inputFile):
 		if(idx == 0):
-			headers = val.decode('utf-8-sig')
+			headers = val
 		elif(idx == 1):
 			fieldIndexes = list(getFieldIndexes(val," "))
 			row = list(getFields(headers,fieldIndexes))
@@ -48,8 +49,8 @@ def getFields(input, indexes):
 
 if __name__ == '__main__':
 	if(len(sys.argv) == 3):
-		with open(sys.argv[1]) as inputFile:
-			with open(sys.argv[2],'wb') as outputFile:
+		with open(sys.argv[1],encoding='utf-8-sig') as inputFile:
+			with open(sys.argv[2],'w',newline='') as outputFile:
 				convert(inputFile,outputFile)
 	else:
 		print("Usage: rpt2csv.py inputFile outputFile")
